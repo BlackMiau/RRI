@@ -1,0 +1,47 @@
+name: Grabar RRI Diario
+
+on:
+  schedule:
+    # 05:00 UTC equivale a las 00:00 (12:00 AM) hora de Lima / Perú
+    - cron: '0 5 * * *'
+  workflow_dispatch:
+
+jobs:
+  grabar_dia_completo:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Instalar FFmpeg
+        run: sudo apt-get update && sudo apt-get install -y ffmpeg
+
+      - name: Definir fecha local (Perú)
+        run: |
+          echo "FECHA_HOY=$(TZ='America/Lima' date +'%Y-%m-%d')" >> $GITHUB_ENV
+
+      # Bloque 1: 00:00 a 06:00 (6 horas = 21600 segundos)
+      - name: Grabar Bloque 1 (Madrugada)
+        run: |
+          ffmpeg -i "https://dattavolt.com/8164/stream" -t 21600 -c copy "RRI (${{ env.FECHA_HOY }}) - Parte 1.mp3"
+
+      # Bloque 2: 06:00 a 12:00 (6 horas = 21600 segundos)
+      - name: Grabar Bloque 2 (Mañana)
+        run: |
+          ffmpeg -i "https://dattavolt.com/8164/stream" -t 21600 -c copy "RRI (${{ env.FECHA_HOY }}) - Parte 2.mp3"
+
+      # Bloque 3: 12:00 a 18:00 (6 horas = 21600 segundos)
+      - name: Grabar Bloque 3 (Tarde)
+        run: |
+          ffmpeg -i "https://dattavolt.com/8164/stream" -t 21600 -c copy "RRI (${{ env.FECHA_HOY }}) - Parte 3.mp3"
+
+      # Bloque 4: 18:00 a 23:58 (5 horas y 58 minutos = 21480 segundos)
+      - name: Grabar Bloque 4 (Noche)
+        run: |
+          ffmpeg -i "https://dattavolt.com/8164/stream" -t 21480 -c copy "RRI (${{ env.FECHA_HOY }}) - Parte 4.mp3"
+
+      # Guardar todos los archivos generados del día
+      - name: Subir grabaciones
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: RRI (${{ env.FECHA_HOY }})
+          path: "*.mp3"
+          retention-days: 7
