@@ -1,8 +1,8 @@
-name: Grabar RRI Diario
+name: RRI Radio
 
 on:
   schedule:
-    # 05:00 UTC equivale a las 00:00 (12:00 AM) hora de Lima / Perú
+    # 05:00 UTC = 00:00 (12:00 AM / medianoche en Perú)
     - cron: '0 5 * * *'
   workflow_dispatch:
 
@@ -17,31 +17,31 @@ jobs:
         run: |
           echo "FECHA_HOY=$(TZ='America/Lima' date +'%Y-%m-%d')" >> $GITHUB_ENV
 
-      # Bloque 1: 00:00 a 06:00 (6 horas = 21600 segundos)
+      # Bloque 1: 00:00:00 a 06:00:00 (6 horas = 21600 s)
       - name: Grabar Bloque 1 (Madrugada)
         run: |
-          ffmpeg -i "https://dattavolt.com/8164/stream" -t 21600 -c copy "RRI (${{ env.FECHA_HOY }}) - Parte 1.mp3"
+          ffmpeg -i "https://dattavolt.com/8164/stream" -t 21600 -c copy "RRI Radio (${{ env.FECHA_HOY }}) - Parte 1.aac"
 
-      # Bloque 2: 06:00 a 12:00 (6 horas = 21600 segundos)
+      # Bloque 2: 06:00:00 a 12:00:00 (6 horas = 21600 s)
       - name: Grabar Bloque 2 (Mañana)
         run: |
-          ffmpeg -i "https://dattavolt.com/8164/stream" -t 21600 -c copy "RRI (${{ env.FECHA_HOY }}) - Parte 2.mp3"
+          ffmpeg -i "https://dattavolt.com/8164/stream" -t 21600 -c copy "RRI Radio (${{ env.FECHA_HOY }}) - Parte 2.aac"
 
-      # Bloque 3: 12:00 a 18:00 (6 horas = 21600 segundos)
+      # Bloque 3: 12:00:00 a 18:00:00 (6 horas = 21600 s)
       - name: Grabar Bloque 3 (Tarde)
         run: |
-          ffmpeg -i "https://dattavolt.com/8164/stream" -t 21600 -c copy "RRI (${{ env.FECHA_HOY }}) - Parte 3.mp3"
+          ffmpeg -i "https://dattavolt.com/8164/stream" -t 21600 -c copy "RRI Radio (${{ env.FECHA_HOY }}) - Parte 3.aac"
 
-      # Bloque 4: 18:00 a 23:58 (5 horas y 58 minutos = 21480 segundos)
+      # Bloque 4: 18:00:00 a 23:59:59 (5 horas, 59 minutos y 59 segundos = 21599 s)
       - name: Grabar Bloque 4 (Noche)
         run: |
-          ffmpeg -i "https://dattavolt.com/8164/stream" -t 21480 -c copy "RRI (${{ env.FECHA_HOY }}) - Parte 4.mp3"
+          ffmpeg -i "https://dattavolt.com/8164/stream" -t 21599 -c copy "RRI Radio (${{ env.FECHA_HOY }}) - Parte 4.aac"
 
-      # Guardar todos los archivos generados del día
+      # Almacenar los audios generados
       - name: Subir grabaciones
         if: always()
         uses: actions/upload-artifact@v4
         with:
-          name: RRI (${{ env.FECHA_HOY }})
-          path: "*.mp3"
+          name: RRI Radio (${{ env.FECHA_HOY }})
+          path: "*.aac"
           retention-days: 7
