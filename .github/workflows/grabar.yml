@@ -20,22 +20,30 @@ jobs:
       # Bloque 1: 00:00:00 a 06:00:00 (6 horas = 21600 s)
       - name: Grabar Bloque 1 (Madrugada)
         run: |
-          ffmpeg -i "https://dattavolt.com/8164/stream" -t 21600 -c copy "RRI Radio (${{ env.FECHA_HOY }}) - Parte 1.aac"
+          ffmpeg -reconnect 1 -reconnect_at_eof 1 -reconnect_streamed 1 -reconnect_delay_max 5 \
+            -user_agent "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36" \
+            -i "http://dattavolt.com/8164/stream" -t 21600 -c copy "RRI Radio (${{ env.FECHA_HOY }}) - Parte 1.aac"
 
       # Bloque 2: 06:00:00 a 12:00:00 (6 horas = 21600 s)
       - name: Grabar Bloque 2 (Mañana)
         run: |
-          ffmpeg -i "https://dattavolt.com/8164/stream" -t 21600 -c copy "RRI Radio (${{ env.FECHA_HOY }}) - Parte 2.aac"
+          ffmpeg -reconnect 1 -reconnect_at_eof 1 -reconnect_streamed 1 -reconnect_delay_max 5 \
+            -user_agent "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36" \
+            -i "http://dattavolt.com/8164/stream" -t 21600 -c copy "RRI Radio (${{ env.FECHA_HOY }}) - Parte 2.aac"
 
       # Bloque 3: 12:00:00 a 18:00:00 (6 horas = 21600 s)
       - name: Grabar Bloque 3 (Tarde)
         run: |
-          ffmpeg -i "https://dattavolt.com/8164/stream" -t 21600 -c copy "RRI Radio (${{ env.FECHA_HOY }}) - Parte 3.aac"
+          ffmpeg -reconnect 1 -reconnect_at_eof 1 -reconnect_streamed 1 -reconnect_delay_max 5 \
+            -user_agent "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36" \
+            -i "http://dattavolt.com/8164/stream" -t 21600 -c copy "RRI Radio (${{ env.FECHA_HOY }}) - Parte 3.aac"
 
       # Bloque 4: 18:00:00 a 23:59:59 (5 horas, 59 minutos y 59 segundos = 21599 s)
       - name: Grabar Bloque 4 (Noche)
         run: |
-          ffmpeg -i "https://dattavolt.com/8164/stream" -t 21599 -c copy "RRI Radio (${{ env.FECHA_HOY }}) - Parte 4.aac"
+          ffmpeg -reconnect 1 -reconnect_at_eof 1 -reconnect_streamed 1 -reconnect_delay_max 5 \
+            -user_agent "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36" \
+            -i "http://dattavolt.com/8164/stream" -t 21599 -c copy "RRI Radio (${{ env.FECHA_HOY }}) - Parte 4.aac"
 
       # Almacenar los audios generados
       - name: Subir grabaciones
